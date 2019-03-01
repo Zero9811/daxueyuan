@@ -1,0 +1,76 @@
+package com.daxueyuan.daxueyuan.service.impl;
+
+import com.daxueyuan.daxueyuan.entity.OrderRecord;
+import com.daxueyuan.daxueyuan.nums.OrderStateEnum;
+import com.daxueyuan.daxueyuan.repository.OrderRecordRepository;
+import com.daxueyuan.daxueyuan.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * @Author: Sean
+ * @Date: 2019/3/1 12:08
+ */
+@Service
+public class OrderServiceImpl implements OrderService {
+
+    @Autowired
+    private OrderRecordRepository orderRecordRepository;
+
+    @Override
+    public void save(OrderRecord orderRecord) {
+        orderRecordRepository.save(orderRecord);
+    }
+
+    @Override
+    public List<OrderRecord> findByCreatorAccount(String creatorAccount) {
+        return orderRecordRepository.findByCreatorAccount(creatorAccount);
+    }
+
+    @Override
+    public List<OrderRecord> findByReceiverAccount(String receiverAccount) {
+        return orderRecordRepository.findByReceiverAccount(receiverAccount);
+    }
+
+    @Override
+    public List<OrderRecord> findAllAccessableOrder() {
+        return orderRecordRepository.findAccessableOrder();
+    }
+
+    @Override
+    public OrderRecord findById(long orderId) {
+        return orderRecordRepository.getOne(orderId);
+    }
+
+    @Override
+    public List<OrderRecord> findCreatorNowOrders(String creatorAccount) {
+        return orderRecordRepository.findCreatorNowOrders(creatorAccount, OrderStateEnum.FINISH.getCode());
+    }
+
+    @Override
+    public List<OrderRecord> findCreatorCompleteOrders(String creatorAccount) {
+        return orderRecordRepository.findCreatorCompleteOrders(creatorAccount, OrderStateEnum.FINISH.getCode());
+    }
+
+    @Override
+    public List<OrderRecord> findReceiverNowOrders(String receiverAccount) {
+        return orderRecordRepository.findReceiverNowOrders(receiverAccount, OrderStateEnum.FINISH.getCode());
+    }
+
+    @Override
+    public List<OrderRecord> findReceiverCompleteOrders(String receiverAccount) {
+        return orderRecordRepository.findReceiverCompleteOrders(receiverAccount, OrderStateEnum.FINISH.getCode());
+    }
+
+    @Override
+    public List<OrderRecord> findCreatorStateOrders(String creatorAccount, int orderState) {
+        return orderRecordRepository.findCreatorStateOrders(creatorAccount,orderState);
+    }
+
+    @Override
+    public List<OrderRecord> findReceiverStateOrders(String receiverAccount, int orderState) {
+        return orderRecordRepository.findReceiverStateOrders(receiverAccount,orderState);
+    }
+}
