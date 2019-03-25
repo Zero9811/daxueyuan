@@ -4,9 +4,13 @@ import com.daxueyuan.daxueyuan.entity.OrderRecord;
 import com.daxueyuan.daxueyuan.nums.OrderStateEnum;
 import com.daxueyuan.daxueyuan.repository.OrderRecordRepository;
 import com.daxueyuan.daxueyuan.service.OrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -14,6 +18,7 @@ import java.util.List;
  * @Date: 2019/3/1 12:08
  */
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -34,9 +39,26 @@ public class OrderServiceImpl implements OrderService {
         return orderRecordRepository.findByReceiverAccount(receiverAccount);
     }
 
+    /**
+     * 查找订单创建后在48小时有效期内的订单
+     * @return
+     */
     @Override
     public List<OrderRecord> findAllAccessableOrder() {
-        return orderRecordRepository.findAccessableOrder();
+        List<OrderRecord> orderRecords = orderRecordRepository.findAccessableOrder();
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.DAY_OF_MONTH,-2);
+        now = calendar.getTime();
+        log.info("time is {}",now);
+        Iterator<OrderRecord> iterator = orderRecords.iterator();
+        while (iterator.hasNext()){
+            OrderRecord orderRecord = iterator.next();
+            if (orderRecord.getCreateTime().before(now))
+                iterator.remove();
+        }
+        return orderRecords;
     }
 
     @Override

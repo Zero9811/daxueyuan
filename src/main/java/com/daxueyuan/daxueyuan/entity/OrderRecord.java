@@ -26,8 +26,8 @@ public class OrderRecord {
     private String packageName;
     private String packageCode;
     private String packageType;
-    private double packagePrice;
-    private Date receiveTime;
+    private String packagePrice;
+    private String receiveTime;
     private String remark;
     private String receiverAccount;
     private int orderState;

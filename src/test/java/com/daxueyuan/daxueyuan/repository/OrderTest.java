@@ -2,6 +2,7 @@ package com.daxueyuan.daxueyuan.repository;
 
 import com.daxueyuan.daxueyuan.DaxueyuanApplicationTests;
 import com.daxueyuan.daxueyuan.entity.OrderRecord;
+import com.daxueyuan.daxueyuan.service.OrderService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,8 @@ public class OrderTest extends DaxueyuanApplicationTests {
 
     @Autowired
     private OrderRecordRepository orderRecordRepository;
+    @Autowired
+    private OrderService orderService;
 
     @Test
     public void saveTest(){
@@ -30,15 +33,15 @@ public class OrderTest extends DaxueyuanApplicationTests {
         orderRecord.setPackageName("不知道");
         orderRecord.setPackageCode("333");
         orderRecord.setPackageType("小");
-        orderRecord.setPackagePrice(4.6);
-        orderRecord.setReceiveTime(new Date());
+        orderRecord.setPackagePrice("22");
+        orderRecord.setReceiveTime("333");
         orderRecord.setRemark("不用");
         orderRecordRepository.save(orderRecord);
     }
 
     @Test
     public void query(){
-        List list = orderRecordRepository.findAccessableOrder();
+        List list = orderService.findAllAccessableOrder();
         System.out.println(list.size());
     }
 }

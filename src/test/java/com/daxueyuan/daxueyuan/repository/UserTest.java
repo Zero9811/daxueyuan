@@ -36,6 +36,7 @@ public class UserTest extends DaxueyuanApplicationTests {
 
     @Test
     public void findTest(){
+        System.out.println(new Date());
         UserRegister userRegister = userRegisterRepository.findByAccount("128");
         System.out.println(userRegister.toString());
     }

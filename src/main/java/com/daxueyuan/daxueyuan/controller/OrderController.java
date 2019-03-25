@@ -1,6 +1,7 @@
 package com.daxueyuan.daxueyuan.controller;
 
 import com.daxueyuan.daxueyuan.VO.ResultVO;
+import com.daxueyuan.daxueyuan.converter.OrderForm2OrderRecord;
 import com.daxueyuan.daxueyuan.entity.OrderRecord;
 import com.daxueyuan.daxueyuan.exception.OrderException;
 import com.daxueyuan.daxueyuan.form.OrderForm;
@@ -15,6 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +33,8 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private OrderForm2OrderRecord orderForm2OrderRecord;
     /**
      * 创建订单接口
      * orderForm的内容为订单的内容
@@ -42,13 +47,12 @@ public class OrderController {
      * @return
      */
     @PostMapping("/create")
-    public ResultVO create(@Valid OrderForm orderForm, BindingResult bindingResult){
+    public ResultVO create(@Valid OrderForm orderForm, BindingResult bindingResult) throws ParseException {
         if(bindingResult.hasErrors()){
             log.info("参数不正确，orderForm={}",orderForm);
             throw new OrderException(1,bindingResult.getFieldError().getDefaultMessage());
         }
-        OrderRecord orderRecord = new OrderRecord();
-        BeanUtils.copyProperties(orderForm,orderRecord);
+        OrderRecord orderRecord = orderForm2OrderRecord.convert(orderForm);
         //orderId暂时不用设置，数据库自增
         orderRecord.setCreateTime(new Date());
         orderRecord.setOrderState(OrderStateEnum.FREE.getCode());

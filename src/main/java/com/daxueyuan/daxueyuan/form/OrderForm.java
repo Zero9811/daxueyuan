@@ -3,7 +3,6 @@ package com.daxueyuan.daxueyuan.form;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.Date;
 
 /**
  * @Author: Sean
@@ -27,8 +26,9 @@ public class OrderForm {
     @NotEmpty(message = "包裹类型")
     private String packageType;
     @NotEmpty(message = "悬赏金必填")
-    private double packagePrice;
+    private String packagePrice;
     @NotEmpty(message = "收货时间必填")
-    private Date receiveTime;
+    //yyyy-MM-dd HH:mm:ss
+    private String receiveTime;
     private String remark;
 }

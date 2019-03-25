@@ -7,4 +7,6 @@ package com.daxueyuan.daxueyuan.constant;
 public interface RedisConstant {
     String SMS_TEMPLATE ="sms_temp_%s";
     int SMS_EXPIRE = 180;
+    String TOKEN_TEMPLATE ="token_temp_%s";
+    int TOKEN_EXPIRE = 360000;
 }
