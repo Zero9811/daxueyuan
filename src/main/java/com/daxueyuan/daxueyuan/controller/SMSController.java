@@ -1,21 +1,15 @@
 package com.daxueyuan.daxueyuan.controller;
 
 import com.daxueyuan.daxueyuan.VO.ResultVO;
-import com.daxueyuan.daxueyuan.constant.RedisConstant;
-import com.daxueyuan.daxueyuan.constant.SMSConstant;
-import com.daxueyuan.daxueyuan.util.ResultVOUtil;
-import com.github.qcloudsms.SmsSingleSender;
-import com.github.qcloudsms.SmsSingleSenderResult;
-import com.github.qcloudsms.httpclient.HTTPException;
+import com.daxueyuan.daxueyuan.entity.UserRegister;
+import com.daxueyuan.daxueyuan.service.SMSService;
+import com.daxueyuan.daxueyuan.service.UserRegisterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: Sean
@@ -27,7 +21,10 @@ import java.util.concurrent.TimeUnit;
 public class SMSController {
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private SMSService smsService;
+
+    @Autowired
+    private UserRegisterService userRegisterService;
 
     /**
      * 获取短信验证
@@ -39,34 +36,45 @@ public class SMSController {
      * @return
      */
     @GetMapping
-    public ResultVO sendeMessage(String phone){
-        String[] phoneNumbers = {phone};
-        log.info("发送的手机号为 ： {}",phoneNumbers[0]);
-        //生成验证码
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0;i<6;i++){
-            int temp = (int)(Math.random()*9);
-            stringBuilder.append(temp);
+    public ResultVO sendMessage(String phone){
+        smsService.sendMessage(phone);
+        ResultVO resultVO = new ResultVO();
+        resultVO.setCode(12);
+        resultVO.setMsg("操作成功");
+        return resultVO;
+    }
+
+    @GetMapping("/userSMS")
+    public ResultVO userSendMessage(String phone){
+        ResultVO resultVO = new ResultVO();
+        UserRegister userRegister = userRegisterService.findByAccount(phone);
+        if (userRegister == null){
+            resultVO.setCode(11);
+            resultVO.setMsg("用户尚未注册");
+            return resultVO;
         }
-        String key = stringBuilder.toString();
 
-        //存储于Redis
-        stringRedisTemplate.opsForValue().set(String.format(RedisConstant.SMS_TEMPLATE,
-                phone),key,RedisConstant.SMS_EXPIRE, TimeUnit.SECONDS);
+        smsService.sendMessage(phone);
 
-        String[] params = {key,"3"};
+        resultVO.setCode(12);
+        resultVO.setMsg("操作成功");
+        return resultVO;
+    }
 
-        SmsSingleSender ssender = new SmsSingleSender(SMSConstant.appid,SMSConstant.appkey);
-        SmsSingleSenderResult result = null;
-        try {
-            result = ssender.sendWithParam("86",phoneNumbers[0],
-                    SMSConstant.templateId,params,SMSConstant.smsSign,"","");
-        } catch (HTTPException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @GetMapping("/registerSMS")
+    public ResultVO registerSendMessage(String phone){
+        ResultVO resultVO = new ResultVO();
+        UserRegister userRegister = userRegisterService.findByAccount(phone);
+        if (userRegister != null){
+            resultVO.setCode(11);
+            resultVO.setMsg("用户已注册");
+            return resultVO;
         }
-        System.out.println(result);
-        return ResultVOUtil.success("发送成功");
+
+        smsService.sendMessage(phone);
+
+        resultVO.setCode(12);
+        resultVO.setMsg("操作成功");
+        return resultVO;
     }
 }

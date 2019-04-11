@@ -22,4 +22,9 @@ public class UserInfo {
     private String email;
     private String sex;
     private String studentState;
+    private int orderCreateNums;
+    private int orderReceiveNums;
+    private int credit;
+    private int favourableCommentNums;
+    private int negativeCommentNums;
 }

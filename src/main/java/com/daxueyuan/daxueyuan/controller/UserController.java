@@ -7,13 +7,9 @@ import com.daxueyuan.daxueyuan.entity.UserRegister;
 import com.daxueyuan.daxueyuan.service.UserInfoService;
 import com.daxueyuan.daxueyuan.service.UserRegisterService;
 import com.daxueyuan.daxueyuan.util.CookieUtil;
-import com.daxueyuan.daxueyuan.util.ResultVOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -53,9 +49,13 @@ public class UserController {
     @PostMapping("/register")
     public ResultVO register(String account,String verificationCode ,String password){
         UserRegister userRegister = userRegisterService.findByAccount(account);
+        ResultVO resultVO = new ResultVO();
         //已存在
-        if (userRegister != null)
-            return ResultVOUtil.fail("该账号已被注册");
+        if (userRegister != null){
+            resultVO.setCode(11);
+            resultVO.setData("该账号已被注册");
+            return resultVO;
+        }
         //短信验证
         if(verificationCode.equals(stringRedisTemplate.opsForValue().
                 get(String.format(RedisConstant.SMS_TEMPLATE,account)))){
@@ -68,10 +68,15 @@ public class UserController {
             UserInfo userInfo = new UserInfo();
             userInfo.setAccount(u.getAccount());
             userInfoService.save(userInfo);
-            return ResultVOUtil.success("注册成功");
+            resultVO.setCode(13);
+            resultVO.setData("注册成功");
+            return resultVO;
         }
-        else
-            return ResultVOUtil.fail("短信验证输入错误");
+        else {
+            resultVO.setCode(12);
+            resultVO.setData("短信验证输入错误");
+            return resultVO;
+        }
     }
 
 
@@ -88,8 +93,12 @@ public class UserController {
     @PostMapping("/phoneLogin")
     public ResultVO loginByPhone(String account, String verificationCode, HttpServletResponse response){
         UserRegister userRegister = userRegisterService.findByAccount(account);
-        if (userRegister == null)
-            return ResultVOUtil.fail("该用户不存在");
+        ResultVO resultVO = new ResultVO();
+        if (userRegister == null){
+            resultVO.setCode(11);
+            resultVO.setData("该用户不存在");
+            return resultVO;
+        }
         //短信验证
         if(verificationCode.equals(stringRedisTemplate.opsForValue().
                 get(String.format(RedisConstant.SMS_TEMPLATE,account)))){
@@ -100,9 +109,13 @@ public class UserController {
             //设置cookie
             response.addCookie(setCookie("token",token));
 
-            return ResultVOUtil.success(userInfoService.findByAccount(account));
+            resultVO.setCode(13);
+            resultVO.setData(userInfoService.findByAccount(account));
+            return resultVO;
         }
-        return ResultVOUtil.fail("验证失败");
+        resultVO.setCode(12);
+        resultVO.setData("验证失败");
+        return resultVO;
     }
 
     /**
@@ -118,10 +131,17 @@ public class UserController {
     @PostMapping("/passwordLogin")
     public ResultVO loginByPassword(String account,String password,HttpServletResponse response){
         UserRegister userRegister = userRegisterService.findByAccount(account);
-        if(userRegister == null)
-            return ResultVOUtil.fail("该用户不存在");
-        if (!password.equals(userRegister.getPassword()))
-            return ResultVOUtil.fail("用户名或密码不正确");
+        ResultVO resultVO = new ResultVO();
+        if(userRegister == null){
+            resultVO.setCode(11);
+            resultVO.setData("该用户不存在");
+            return resultVO;
+        }
+        if (!password.equals(userRegister.getPassword())){
+            resultVO.setCode(12);
+            resultVO.setData("用户名或密码不正确");
+            return resultVO;
+        }
         //Redis操作
         String token = UUID.randomUUID().toString();
 
@@ -129,7 +149,9 @@ public class UserController {
 
         //设置cookie
         response.addCookie(setCookie("token",token));
-        return ResultVOUtil.success(userInfoService.findByAccount(account));
+        resultVO.setCode(13);
+        resultVO.setData(userInfoService.findByAccount(account));
+        return resultVO;
     }
 
     /**
@@ -141,8 +163,16 @@ public class UserController {
      */
     @GetMapping("/isRegister")
     public ResultVO isRegister(String account){
-        return userRegisterService.isExist(account)?
-                ResultVOUtil.success(true):ResultVOUtil.success(false);
+        boolean flag = userRegisterService.isExist(account);
+        ResultVO resultVO = new ResultVO();
+        if (flag){
+            resultVO.setCode(11);
+            resultVO.setMsg("该用户已注册");
+            return resultVO;
+        }
+        resultVO.setCode(12);
+        resultVO.setMsg("该用户未注册");
+        return resultVO;
     }
 
     /**
@@ -167,8 +197,50 @@ public class UserController {
         cookie.setMaxAge(0);
         cookie.setValue(null);
         response.addCookie(cookie);
+        ResultVO resultVO = new ResultVO();
+        resultVO.setCode(11);
+        resultVO.setMsg("退出登录成功");
+        return resultVO;
+    }
 
-        return ResultVOUtil.success("登出成功");
+    @PutMapping("/modifyPassword")
+    public ResultVO modifyPassword(String account,String oldPassword,String newPassword){
+        UserRegister userRegister = userRegisterService.findByAccount(account);
+        ResultVO resultVO =new ResultVO();
+        if (userRegister != null){
+            if (userRegister.getPassword().equals(oldPassword)){
+                userRegister.setPassword(newPassword);
+                userRegisterService.save(userRegister);
+                resultVO.setCode(12);
+                resultVO.setMsg("操作成功");
+                return resultVO;
+            }
+            else {
+                resultVO.setCode(11);
+                resultVO.setMsg("操作失败");
+                return resultVO;
+            }
+        }
+        else {
+            resultVO.setCode(10);
+            resultVO.setMsg("用户不存在");
+            return resultVO;
+        }
+    }
+
+    @PutMapping("/modifyUserInfo")
+    public ResultVO modifyUserInfo(UserInfo userInfo){
+        userInfoService.save(userInfo);
+        ResultVO resultVO = new ResultVO();
+        resultVO.setCode(12);
+        resultVO.setMsg("操作成功");
+        resultVO.setData(userInfo);
+        return resultVO;
+    }
+
+    //TODO 旧手机和新手机都要验证
+    public ResultVO changeAccount(){
+        return null;
     }
 
     private void setRedis(String key,String value){
