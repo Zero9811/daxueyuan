@@ -77,4 +77,21 @@ public class SMSController {
         resultVO.setMsg("操作成功");
         return resultVO;
     }
+
+    @GetMapping("/validate")
+    public ResultVO validate(String phone,String code){
+        ResultVO resultVO = new ResultVO();
+        if (smsService.validate(phone,code)){
+            resultVO.setCode(12);
+            resultVO.setMsg("操作成功");
+            resultVO.setData("验证通过");
+            return resultVO;
+        }
+        else {
+            resultVO.setCode(11);
+            resultVO.setMsg("验证不通过");
+            resultVO.setData("验证不通过");
+            return resultVO;
+        }
+    }
 }

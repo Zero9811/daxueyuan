@@ -9,4 +9,5 @@ import com.daxueyuan.daxueyuan.entity.UserInfo;
 public interface UserInfoService {
     UserInfo findByAccount(String account);
     void save(UserInfo userInfo);
+    void deleteByAccount(String account);
 }

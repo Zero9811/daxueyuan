@@ -95,4 +95,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderRecord> findReceiverStateOrders(String receiverAccount, int orderState) {
         return orderRecordRepository.findReceiverStateOrders(receiverAccount,orderState);
     }
+
+    @Override
+    public void saveAll(List<OrderRecord> orderRecordList) {
+        orderRecordRepository.saveAll(orderRecordList);
+    }
 }

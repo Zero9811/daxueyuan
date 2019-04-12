@@ -32,4 +32,9 @@ public class UserRegisterServiceImpl implements UserRegisterService {
     public UserRegister findByAccount(String account) {
         return userRegisterRepository.findByAccount(account);
     }
+
+    @Override
+    public void deleteByAccount(String account) {
+        userRegisterRepository.deleteById(account);
+    }
 }

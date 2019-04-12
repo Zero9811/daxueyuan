@@ -6,4 +6,5 @@ package com.daxueyuan.daxueyuan.service;
  */
 public interface SMSService {
     void sendMessage(String phone);
+    boolean validate(String phone,String code);
 }

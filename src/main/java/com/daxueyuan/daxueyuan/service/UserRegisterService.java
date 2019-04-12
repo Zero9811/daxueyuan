@@ -10,4 +10,5 @@ public interface UserRegisterService {
     void save(UserRegister userRegister);
     boolean isExist(String account);
     UserRegister findByAccount(String account);
+    void deleteByAccount(String account);
 }

@@ -54,4 +54,13 @@ public class SMSServiceImpl implements SMSService {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public boolean validate(String phone, String code) {
+        if(code.equals(stringRedisTemplate.opsForValue().
+                get(String.format(RedisConstant.SMS_TEMPLATE,phone)))){
+            return true;
+        }
+        return false;
+    }
 }

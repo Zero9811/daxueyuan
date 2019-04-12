@@ -25,4 +25,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     public void save(UserInfo userInfo) {
         userInfoRepository.save(userInfo);
     }
+
+    @Override
+    public void deleteByAccount(String account) {
+        userInfoRepository.deleteById(account);
+    }
 }

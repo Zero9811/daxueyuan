@@ -2,8 +2,11 @@ package com.daxueyuan.daxueyuan.controller;
 
 import com.daxueyuan.daxueyuan.VO.ResultVO;
 import com.daxueyuan.daxueyuan.constant.RedisConstant;
+import com.daxueyuan.daxueyuan.entity.OrderRecord;
 import com.daxueyuan.daxueyuan.entity.UserInfo;
 import com.daxueyuan.daxueyuan.entity.UserRegister;
+import com.daxueyuan.daxueyuan.service.OrderService;
+import com.daxueyuan.daxueyuan.service.SMSService;
 import com.daxueyuan.daxueyuan.service.UserInfoService;
 import com.daxueyuan.daxueyuan.service.UserRegisterService;
 import com.daxueyuan.daxueyuan.util.CookieUtil;
@@ -15,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +38,12 @@ public class UserController {
 
     @Autowired
     private UserInfoService userInfoService;
+
+    @Autowired
+    private SMSService smsService;
+
+    @Autowired
+    private OrderService orderService;
 
     /**
      *注册
@@ -238,9 +248,83 @@ public class UserController {
         return resultVO;
     }
 
-    //TODO 旧手机和新手机都要验证
-    public ResultVO changeAccount(){
-        return null;
+    @PutMapping("/phonePasswordReset")
+    public ResultVO phonePasswordReset(String account,String verificationCode,String newPassword){
+        ResultVO resultVO = new ResultVO();
+        if(!verificationCode.equals(stringRedisTemplate.opsForValue().
+                get(String.format(RedisConstant.SMS_TEMPLATE,account)))){
+            resultVO.setCode(11);
+            resultVO.setMsg("验证码错误");
+            return resultVO;
+        }
+
+        UserRegister userRegister = userRegisterService.findByAccount(account);
+        userRegister.setPassword(newPassword);
+        userRegisterService.save(userRegister);
+        resultVO.setCode(12);
+        resultVO.setMsg("操作成功");
+        return resultVO;
+    }
+
+    //旧手机和新手机都要验证
+
+    /**
+     * 查看新的手机号是否已注册
+     * 验证验证码是否通过
+     * 添加新账号
+     * 将所有相关信息改为新账号
+     * 删除旧账号
+     * @param oldAccount
+     * @param newAccount
+     * @param verificationCode
+     * @return
+     */
+    @PutMapping("/account")
+    public ResultVO changeAccount(String oldAccount,String newAccount,String verificationCode){
+        ResultVO resultVO = new ResultVO();
+        //验证
+        if (userRegisterService.isExist(newAccount)){
+            resultVO.setCode(10);
+            resultVO.setMsg("账号已存在");
+            resultVO.setData("账号已存在");
+            return resultVO;
+        }
+        if (!smsService.validate(newAccount,verificationCode)){
+            resultVO.setCode(11);
+            resultVO.setMsg("验证不通过");
+            resultVO.setData("验证码错误");
+            return resultVO;
+        }
+        //保存
+        UserRegister userRegister = userRegisterService.findByAccount(oldAccount);
+        userRegister.setAccount(newAccount);
+        userRegisterService.save(userRegister);
+        UserInfo userInfo = userInfoService.findByAccount(oldAccount);
+        userInfo.setAccount(newAccount);
+        userInfoService.save(userInfo);
+
+        List<OrderRecord> orderList1 = orderService.findByCreatorAccount(oldAccount);
+        for (OrderRecord orderRecord :
+                orderList1) {
+            orderRecord.setCreatorAccount(newAccount);
+        }
+        orderService.saveAll(orderList1);
+        List<OrderRecord> orderList2 = orderService.findByReceiverAccount(oldAccount);
+        for (OrderRecord orderRecord :
+                orderList2) {
+            orderRecord.setReceiverAccount(newAccount);
+        }
+        orderService.saveAll(orderList2);
+
+        //删除旧信息
+        userRegisterService.deleteByAccount(oldAccount);
+        userInfoService.deleteByAccount(oldAccount);
+
+        resultVO.setCode(12);
+        resultVO.setMsg("操作成功");
+        resultVO.setData("账号更改成功，请使用新账号登录");
+
+        return resultVO;
     }
 
     private void setRedis(String key,String value){
