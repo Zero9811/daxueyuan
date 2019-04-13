@@ -62,7 +62,7 @@ public class UserController {
         ResultVO resultVO = new ResultVO();
         //已存在
         if (userRegister != null){
-            resultVO.setCode(11);
+            resultVO.setCode(10);
             resultVO.setData("该账号已被注册");
             return resultVO;
         }
@@ -78,12 +78,13 @@ public class UserController {
             UserInfo userInfo = new UserInfo();
             userInfo.setAccount(u.getAccount());
             userInfoService.save(userInfo);
-            resultVO.setCode(13);
-            resultVO.setData("注册成功");
+            resultVO.setCode(12);
+            resultVO.setMsg("注册成功");
+            resultVO.setData(userInfo);
             return resultVO;
         }
         else {
-            resultVO.setCode(12);
+            resultVO.setCode(11);
             resultVO.setData("短信验证输入错误");
             return resultVO;
         }
@@ -105,7 +106,7 @@ public class UserController {
         UserRegister userRegister = userRegisterService.findByAccount(account);
         ResultVO resultVO = new ResultVO();
         if (userRegister == null){
-            resultVO.setCode(11);
+            resultVO.setCode(10);
             resultVO.setData("该用户不存在");
             return resultVO;
         }
@@ -119,11 +120,11 @@ public class UserController {
             //设置cookie
             response.addCookie(setCookie("token",token));
 
-            resultVO.setCode(13);
+            resultVO.setCode(12);
             resultVO.setData(userInfoService.findByAccount(account));
             return resultVO;
         }
-        resultVO.setCode(12);
+        resultVO.setCode(11);
         resultVO.setData("验证失败");
         return resultVO;
     }
@@ -143,12 +144,12 @@ public class UserController {
         UserRegister userRegister = userRegisterService.findByAccount(account);
         ResultVO resultVO = new ResultVO();
         if(userRegister == null){
-            resultVO.setCode(11);
+            resultVO.setCode(10);
             resultVO.setData("该用户不存在");
             return resultVO;
         }
         if (!password.equals(userRegister.getPassword())){
-            resultVO.setCode(12);
+            resultVO.setCode(11);
             resultVO.setData("用户名或密码不正确");
             return resultVO;
         }
@@ -159,7 +160,7 @@ public class UserController {
 
         //设置cookie
         response.addCookie(setCookie("token",token));
-        resultVO.setCode(13);
+        resultVO.setCode(12);
         resultVO.setData(userInfoService.findByAccount(account));
         return resultVO;
     }
@@ -208,7 +209,7 @@ public class UserController {
         cookie.setValue(null);
         response.addCookie(cookie);
         ResultVO resultVO = new ResultVO();
-        resultVO.setCode(11);
+        resultVO.setCode(12);
         resultVO.setMsg("退出登录成功");
         return resultVO;
     }

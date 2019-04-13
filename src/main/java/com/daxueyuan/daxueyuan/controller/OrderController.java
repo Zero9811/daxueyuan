@@ -89,7 +89,7 @@ public class OrderController {
         List result = orderService.findAllAccessableOrder();
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
-            resultVO.setCode(11);
+            resultVO.setCode(13);
             resultVO.setMsg("数据为空");
             resultVO.setData(result);
             return resultVO;
@@ -103,7 +103,7 @@ public class OrderController {
      * @param cancelReason
      * @return
      */
-    @GetMapping("/creatorCancel")
+    @PutMapping("/creatorCancel")
     public ResultVO cancelOrder(long orderId,String cancelReason){
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setIsCancel(true);
@@ -117,7 +117,7 @@ public class OrderController {
      * @param orderId
      * @return
      */
-    @GetMapping("/receiverCancel")
+    @PutMapping("/receiverCancel")
     public ResultVO receiverCancel(long orderId){
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setReceiverAccount(null);
@@ -135,7 +135,7 @@ public class OrderController {
         List result = orderService.findCreatorNowOrders(creatorAccount);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
-            resultVO.setCode(11);
+            resultVO.setCode(13);
             resultVO.setMsg("数据为空");
             resultVO.setData(result);
             return resultVO;
@@ -153,7 +153,7 @@ public class OrderController {
         List result = orderService.findCreatorCompleteOrders(creatorAccount);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
-            resultVO.setCode(11);
+            resultVO.setCode(13);
             resultVO.setMsg("数据为空");
             resultVO.setData(result);
             return resultVO;
@@ -172,7 +172,7 @@ public class OrderController {
         List result = orderService.findCreatorStateOrders(creatorAccount,orderState);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
-            resultVO.setCode(11);
+            resultVO.setCode(13);
             resultVO.setMsg("数据为空");
             resultVO.setData(result);
             return resultVO;
@@ -190,7 +190,7 @@ public class OrderController {
         List result = orderService.findReceiverNowOrders(creatorAccount);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
-            resultVO.setCode(11);
+            resultVO.setCode(13);
             resultVO.setMsg("数据为空");
             resultVO.setData(result);
             return resultVO;
@@ -208,7 +208,7 @@ public class OrderController {
         List result = orderService.findReceiverCompleteOrders(creatorAccount);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
-            resultVO.setCode(11);
+            resultVO.setCode(13);
             resultVO.setMsg("数据为空");
             resultVO.setData(result);
             return resultVO;
@@ -227,7 +227,7 @@ public class OrderController {
         List result = orderService.findReceiverStateOrders(receiverAccount,orderState);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
-            resultVO.setCode(11);
+            resultVO.setCode(13);
             resultVO.setMsg("数据为空");
             resultVO.setData(result);
             return resultVO;
