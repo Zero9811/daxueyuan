@@ -7,6 +7,7 @@ import com.daxueyuan.daxueyuan.exception.OrderException;
 import com.daxueyuan.daxueyuan.form.OrderForm;
 import com.daxueyuan.daxueyuan.nums.OrderStateEnum;
 import com.daxueyuan.daxueyuan.service.OrderService;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,6 +238,25 @@ public class OrderController {
             return resultVO;
         }
         return successResult(result);
+    }
+
+    @GetMapping("/creatorAndReceiverStateOrders")
+    public ResultVO creatorAndReceiverStateOrders(String account,String orderStateS){
+        int orderState = Integer.valueOf(orderStateS);
+        List<OrderRecord> result = orderService.findCreatorAndReceiverStateOrders(account,orderState);
+        ResultVO resultVO = new ResultVO();
+        if (result.size()==0){
+            resultVO.setCode(13);
+            resultVO.setMsg("数据为空");
+            resultVO.setData(result);
+            return resultVO;
+        }
+        else {
+            resultVO.setCode(12);
+            resultVO.setMsg("成功");
+            resultVO.setData(result);
+            return resultVO;
+        }
     }
 
     /**

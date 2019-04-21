@@ -30,4 +30,6 @@ public interface OrderRecordRepository extends JpaRepository<OrderRecord,Long> {
     List<OrderRecord> findCreatorStateOrders(String creatorAccount,int orderState);
     @Query(value = "from OrderRecord o where o.receiverAccount = ?0 and o.orderState = ?1 and o.isCancel = false")
     List<OrderRecord> findReceiverStateOrders(String receiverAccount,int orderState);
+    @Query(value = "from OrderRecord o where (o.creatorAccount = ?0 and o.orderState = ?1 and o.isCancel = false) or (o.receiverAccount = ?0 and o.orderState = ?1 and o.isCancel = false)")
+    List<OrderRecord> findCreatorAndReceiverStateOrders(String account,int orderState);
 }

@@ -100,4 +100,9 @@ public class OrderServiceImpl implements OrderService {
     public void saveAll(List<OrderRecord> orderRecordList) {
         orderRecordRepository.saveAll(orderRecordList);
     }
+
+    @Override
+    public List<OrderRecord> findCreatorAndReceiverStateOrders(String account, int state) {
+        return orderRecordRepository.findCreatorAndReceiverStateOrders(account,state);
+    }
 }
