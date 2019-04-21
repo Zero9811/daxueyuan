@@ -10,10 +10,11 @@ import lombok.Getter;
 public enum OrderStateEnum {
     CANCEL(0,"取消"),
     FREE(1,"未接单"),
-    BOOK(2,"已接单"),
-    PICK(3,"已取货"),
-    RECEIVE(4,"已收货"),
-    FINISH(5,"已完成"),
+    APPLYING(2,"申请中"),
+    BOOK(3,"已接单"),
+    PICK(4,"已取货"),
+    RECEIVE(5,"已收货"),
+    FINISH(6,"已完成"),
     ;
     private int code;
     private String msg;

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -117,8 +116,8 @@ public class UserController {
             String token = UUID.randomUUID().toString();
             setRedis(token,account);
 
-            //设置cookie
-            response.addCookie(setCookie("token",token));
+//            //设置cookie
+//            response.addCookie(setCookie("token",token));
 
             resultVO.setCode(12);
             resultVO.setData(userInfoService.findByAccount(account));
@@ -158,8 +157,8 @@ public class UserController {
 
         setRedis(token,account);
 
-        //设置cookie
-        response.addCookie(setCookie("token",token));
+//        //设置cookie
+//        response.addCookie(setCookie("token",token));
         resultVO.setCode(12);
         resultVO.setData(userInfoService.findByAccount(account));
         return resultVO;
@@ -198,16 +197,16 @@ public class UserController {
     public ResultVO logout(HttpServletRequest request, HttpServletResponse response){
 
 
-        //获取cookie
-        Cookie cookie = CookieUtil.get(request,"token");
-
-        //清除Redis
-        stringRedisTemplate.delete(String.format(RedisConstant.TOKEN_TEMPLATE,cookie.getValue()));
-        //清除cookie
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        cookie.setValue(null);
-        response.addCookie(cookie);
+//        //获取cookie
+//        Cookie cookie = CookieUtil.get(request,"token");
+//
+//        //清除Redis
+//        stringRedisTemplate.delete(String.format(RedisConstant.TOKEN_TEMPLATE,cookie.getValue()));
+//        //清除cookie
+//        cookie.setPath("/");
+//        cookie.setMaxAge(0);
+//        cookie.setValue(null);
+//        response.addCookie(cookie);
         ResultVO resultVO = new ResultVO();
         resultVO.setCode(12);
         resultVO.setMsg("退出登录成功");

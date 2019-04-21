@@ -7,7 +7,6 @@ import com.daxueyuan.daxueyuan.exception.OrderException;
 import com.daxueyuan.daxueyuan.form.OrderForm;
 import com.daxueyuan.daxueyuan.nums.OrderStateEnum;
 import com.daxueyuan.daxueyuan.service.OrderService;
-import com.daxueyuan.daxueyuan.util.ResultVOUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +65,13 @@ public class OrderController {
      * 2.添加接单人
      * 3.改变订单状态
      * 4.保存并返回
-     * @param orderId
+     * @param orderIdS
      * @param receiverAccount
      * @return
      */
     @PutMapping("/receive")
-    public ResultVO receiveOrder(long orderId,String receiverAccount){
+    public ResultVO receiveOrder(String orderIdS,String receiverAccount){
+        long orderId = Long.valueOf(orderIdS);
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setReceiverAccount(receiverAccount);
         orderRecord.setOrderState(OrderStateEnum.BOOK.getCode());
@@ -99,12 +99,13 @@ public class OrderController {
 
     /**
      * 用户自己取消订单
-     * @param orderId
+     * @param orderIdS
      * @param cancelReason
      * @return
      */
     @PutMapping("/creatorCancel")
-    public ResultVO cancelOrder(long orderId,String cancelReason){
+    public ResultVO cancelOrder(String orderIdS,String cancelReason){
+        long orderId = Long.valueOf(orderIdS);
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setIsCancel(true);
         orderRecord.setCancelReason(cancelReason);
@@ -114,11 +115,12 @@ public class OrderController {
 
     /**
      * 取快递的人退单
-     * @param orderId
+     * @param orderIdS
      * @return
      */
     @PutMapping("/receiverCancel")
-    public ResultVO receiverCancel(long orderId){
+    public ResultVO receiverCancel(String orderIdS){
+        long orderId = Long.valueOf(orderIdS);
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setReceiverAccount(null);
         orderService.save(orderRecord);
@@ -164,11 +166,12 @@ public class OrderController {
     /**
      * 用户按照订单状态查找某一状态的自己的所有的订单
      * @param creatorAccount
-     * @param orderState
+     * @param orderStateS
      * @return
      */
     @GetMapping("/creatorStateOrders")
-    public ResultVO creatorStateOrders(String creatorAccount,int orderState){
+    public ResultVO creatorStateOrders(String creatorAccount,String orderStateS){
+        int orderState = Integer.valueOf(orderStateS);
         List result = orderService.findCreatorStateOrders(creatorAccount,orderState);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
@@ -219,11 +222,12 @@ public class OrderController {
     /**
      * 接单人按照订单状态查看自己某一订单状态下的所有订单
      * @param receiverAccount
-     * @param orderState
+     * @param orderStateS
      * @return
      */
     @GetMapping("/receiverStateOrders")
-    public ResultVO receiverStateOrders(String receiverAccount,int orderState){
+    public ResultVO receiverStateOrders(String receiverAccount,String orderStateS){
+        int orderState = Integer.valueOf(orderStateS);
         List result = orderService.findReceiverStateOrders(receiverAccount,orderState);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
@@ -237,12 +241,14 @@ public class OrderController {
 
     /**
      * 改变订单状态
-     * @param orderId
-     * @param state
+     * @param orderIdS
+     * @param stateS
      * @return
      */
     @PutMapping("/orderState")
-    public ResultVO changeOrderState(long orderId,int state){
+    public ResultVO changeOrderState(String orderIdS,String stateS){
+        int state = Integer.valueOf(stateS);
+        long orderId = Long.valueOf(orderIdS);
         //订单状态向前改变的校验暂时不考虑
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setOrderState(state);
@@ -252,14 +258,15 @@ public class OrderController {
 
     /**
      * 订单还未被接单时，用户可以修改订单信息
-     * @param orderId
+     * @param orderIdS
      * @param orderForm
      * @param bindingResult
      * @return
      */
     //TODO 这个接口可能有问题
     @PutMapping("/orderInfo")
-    public ResultVO changeOrderInfo(long orderId,@Valid OrderForm orderForm,BindingResult bindingResult){
+    public ResultVO changeOrderInfo(String orderIdS,@Valid OrderForm orderForm,BindingResult bindingResult){
+        long orderId = Long.valueOf(orderIdS);
         if(bindingResult.hasErrors()){
             log.info("参数不正确，orderForm={}",orderForm);
             throw new OrderException(1,bindingResult.getFieldError().getDefaultMessage());
