@@ -10,6 +10,7 @@ import com.daxueyuan.daxueyuan.service.SMSService;
 import com.daxueyuan.daxueyuan.service.UserInfoService;
 import com.daxueyuan.daxueyuan.service.UserRegisterService;
 import com.daxueyuan.daxueyuan.util.CookieUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -297,24 +298,32 @@ public class UserController {
         }
         //保存
         UserRegister userRegister = userRegisterService.findByAccount(oldAccount);
-        userRegister.setAccount(newAccount);
-        userRegisterService.save(userRegister);
+        UserRegister userRegister1 = new UserRegister();
+        BeanUtils.copyProperties(userRegister,userRegister1);
+        userRegister1.setAccount(newAccount);
+        userRegisterService.save(userRegister1);
         UserInfo userInfo = userInfoService.findByAccount(oldAccount);
-        userInfo.setAccount(newAccount);
-        userInfoService.save(userInfo);
+        UserInfo userInfo1 = new UserInfo();
+        BeanUtils.copyProperties(userInfo,userInfo1);
+        userInfo1.setAccount(newAccount);
+        userInfoService.save(userInfo1);
 
         List<OrderRecord> orderList1 = orderService.findByCreatorAccount(oldAccount);
-        for (OrderRecord orderRecord :
-                orderList1) {
-            orderRecord.setCreatorAccount(newAccount);
+        if (orderList1.size()>0) {
+            for (OrderRecord orderRecord :
+                    orderList1) {
+                orderRecord.setCreatorAccount(newAccount);
+            }
+            orderService.saveAll(orderList1);
         }
-        orderService.saveAll(orderList1);
         List<OrderRecord> orderList2 = orderService.findByReceiverAccount(oldAccount);
-        for (OrderRecord orderRecord :
-                orderList2) {
-            orderRecord.setReceiverAccount(newAccount);
+        if (orderList2.size()>0) {
+            for (OrderRecord orderRecord :
+                    orderList2) {
+                orderRecord.setReceiverAccount(newAccount);
+            }
+            orderService.saveAll(orderList2);
         }
-        orderService.saveAll(orderList2);
 
         //删除旧信息
         userRegisterService.deleteByAccount(oldAccount);
@@ -322,7 +331,7 @@ public class UserController {
 
         resultVO.setCode(12);
         resultVO.setMsg("操作成功");
-        resultVO.setData("账号更改成功，请使用新账号登录");
+        resultVO.setData(userInfo1);
 
         return resultVO;
     }
