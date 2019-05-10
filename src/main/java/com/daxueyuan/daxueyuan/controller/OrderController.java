@@ -51,6 +51,12 @@ public class OrderController {
             throw new OrderException(1,bindingResult.getFieldError().getDefaultMessage());
         }
         OrderRecord orderRecord = orderForm2OrderRecord.convert(orderForm);
+        try {
+            orderRecord.setLat(Double.valueOf(orderForm.getLatS()));
+            orderRecord.setLng(Double.valueOf(orderForm.getLngS()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //orderId暂时不用设置，数据库自增
         orderRecord.setCreateTime(new Date());
         orderRecord.setOrderState(OrderStateEnum.FREE.getCode());
@@ -77,7 +83,7 @@ public class OrderController {
         orderRecord.setReceiverAccount(receiverAccount);
         orderRecord.setOrderState(OrderStateEnum.BOOK.getCode());
         orderService.save(orderRecord);
-        ResultVO resultVO = successResult(orderRecord);
+        ResultVO resultVO = successResult(orderRecord.getOrderId());
         return resultVO;
     }
 
@@ -86,8 +92,9 @@ public class OrderController {
      * @return
      */
     @GetMapping("/mart")
-    public ResultVO findAllAccess(){
-        List result = orderService.findAllAccessableOrder();
+    public ResultVO findAllAccess(String latS,String lngS,String distance){
+        List result = orderService.findAllAccessableOrder(latS,lngS,distance);
+
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
             resultVO.setCode(13);
@@ -109,6 +116,7 @@ public class OrderController {
         long orderId = Long.valueOf(orderIdS);
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setIsCancel(true);
+        orderRecord.setOrderState(OrderStateEnum.CANCEL.getCode());
         orderRecord.setCancelReason(cancelReason);
         orderService.save(orderRecord);
         return successResult("订单已取消");
@@ -173,6 +181,8 @@ public class OrderController {
     @GetMapping("/creatorStateOrders")
     public ResultVO creatorStateOrders(String creatorAccount,String orderStateS){
         int orderState = Integer.valueOf(orderStateS);
+        log.info("查询状态 ： "+orderState);
+        System.out.println("状态: "+orderState);
         List result = orderService.findCreatorStateOrders(creatorAccount,orderState);
         if (result == null || result.size()<1){
             ResultVO resultVO = new ResultVO();
@@ -271,9 +281,15 @@ public class OrderController {
         long orderId = Long.valueOf(orderIdS);
         //订单状态向前改变的校验暂时不考虑
         OrderRecord orderRecord = orderService.findById(orderId);
+        log.info("订单状态: "+orderRecord.getOrderState());
         orderRecord.setOrderState(state);
         orderService.save(orderRecord);
-        return successResult(orderRecord);
+        log.info("订单id: "+orderRecord.getOrderId());
+        ResultVO resultVO = new ResultVO();
+        resultVO.setCode(12);
+        resultVO.setMsg("操作成功");
+        resultVO.setData(orderRecord.getOrderId());
+        return resultVO;
     }
 
     /**
@@ -297,7 +313,7 @@ public class OrderController {
         BeanUtils.copyProperties(orderForm,orderRecord);
         log.info("订单Id为 + "+orderRecord.getOrderId());
         orderService.save(orderRecord);
-        return successResult(orderRecord);
+        return successResult(orderRecord.getOrderId());
     }
 
     private ResultVO successResult(Object o){

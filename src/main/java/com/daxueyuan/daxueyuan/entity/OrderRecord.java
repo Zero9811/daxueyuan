@@ -3,6 +3,7 @@ package com.daxueyuan.daxueyuan.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "orderRecord_table")
-public class OrderRecord {
+public class OrderRecord{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long orderId;
@@ -33,6 +34,9 @@ public class OrderRecord {
     private int orderState;
     private boolean isCancel;
     private String cancelReason;
+    //经纬度
+    private double lat;
+    private double lng;
 
     public void setIsCancel(boolean isCancel){
         this.isCancel = isCancel;

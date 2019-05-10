@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+
+
 /**
  * @Author: Sean
  * @Date: 2019/3/1 12:08
@@ -43,8 +45,9 @@ public class OrderServiceImpl implements OrderService {
      * 查找订单创建后在48小时有效期内的订单
      * @return
      */
+    //TODO 查询方式待优化
     @Override
-    public List<OrderRecord> findAllAccessableOrder() {
+    public List<OrderRecord> findAllAccessableOrder(String latS,String lngS,String distanceS) {
         List<OrderRecord> orderRecords = orderRecordRepository.findAccessableOrder();
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -53,9 +56,14 @@ public class OrderServiceImpl implements OrderService {
         now = calendar.getTime();
         log.info("time is {}",now);
         Iterator<OrderRecord> iterator = orderRecords.iterator();
+        double lat = Double.valueOf(latS);
+        double lng = Double.valueOf(lngS);
+        double distance = Double.valueOf(distanceS);
         while (iterator.hasNext()){
             OrderRecord orderRecord = iterator.next();
             if (orderRecord.getCreateTime().before(now))
+                iterator.remove();
+            if (getDist(orderRecord.getLng(),orderRecord.getLat(),lng,lat) > distance)
                 iterator.remove();
         }
         return orderRecords;
@@ -68,32 +76,33 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderRecord> findCreatorNowOrders(String creatorAccount) {
-        return orderRecordRepository.findCreatorNowOrders(creatorAccount, OrderStateEnum.FINISH.getCode());
+        return orderRecordRepository.findByCreatorAccountAndOrderStateLessThan(creatorAccount, OrderStateEnum.FINISH.getCode());
     }
 
     @Override
     public List<OrderRecord> findCreatorCompleteOrders(String creatorAccount) {
-        return orderRecordRepository.findCreatorCompleteOrders(creatorAccount, OrderStateEnum.FINISH.getCode());
+        return orderRecordRepository.findByCreatorAccountAndAndOrderStateAndIsCancelFalse(creatorAccount, OrderStateEnum.FINISH.getCode());
     }
 
     @Override
     public List<OrderRecord> findReceiverNowOrders(String receiverAccount) {
-        return orderRecordRepository.findReceiverNowOrders(receiverAccount, OrderStateEnum.FINISH.getCode());
+        return orderRecordRepository.findByReceiverAccountAndOrderStateLessThan(receiverAccount, OrderStateEnum.FINISH.getCode());
     }
 
     @Override
     public List<OrderRecord> findReceiverCompleteOrders(String receiverAccount) {
-        return orderRecordRepository.findReceiverCompleteOrders(receiverAccount, OrderStateEnum.FINISH.getCode());
+        return orderRecordRepository.findByReceiverAccountAndOrderStateAndIsCancelFalse(receiverAccount, OrderStateEnum.FINISH.getCode());
     }
 
     @Override
     public List<OrderRecord> findCreatorStateOrders(String creatorAccount, int orderState) {
-        return orderRecordRepository.findCreatorStateOrders(creatorAccount,orderState);
+        return orderRecordRepository.
+                findByCreatorAccountAndAndOrderStateAndIsCancelFalse(creatorAccount,orderState);
     }
 
     @Override
     public List<OrderRecord> findReceiverStateOrders(String receiverAccount, int orderState) {
-        return orderRecordRepository.findReceiverStateOrders(receiverAccount,orderState);
+        return orderRecordRepository.findByReceiverAccountAndOrderStateAndIsCancelFalse(receiverAccount,orderState);
     }
 
     @Override
@@ -103,6 +112,49 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderRecord> findCreatorAndReceiverStateOrders(String account, int state) {
-        return orderRecordRepository.findCreatorAndReceiverStateOrders(account,state);
+        List<OrderRecord> result1 = orderRecordRepository.
+                findByCreatorAccountAndAndOrderStateAndIsCancelFalse(account,state);
+        List<OrderRecord> result2 = orderRecordRepository.
+                findByReceiverAccountAndOrderStateAndIsCancelFalse(account,state);
+        result1.addAll(result2);
+        return result1;
+    }
+
+    private final double EARTH_RADIUS = 6378137;
+
+    private double getDist(double lng1,double lat1,double lng2,double lat2){
+        double radLat1 = rad(lat1);
+        double radLat2 = rad(lat2);
+        double radLon1 = rad(lng1);
+        double radLon2 = rad(lng2);
+        if (radLat1 < 0)
+            radLat1 = Math.PI / 2 + Math.abs(radLat1);// south
+        if (radLat1 > 0)
+            radLat1 = Math.PI / 2 - Math.abs(radLat1);// north
+        if (radLon1 < 0)
+            radLon1 = Math.PI * 2 - Math.abs(radLon1);// west
+        if (radLat2 < 0)
+            radLat2 = Math.PI / 2 + Math.abs(radLat2);// south
+        if (radLat2 > 0)
+            radLat2 = Math.PI / 2 - Math.abs(radLat2);// north
+        if (radLon2 < 0)
+            radLon2 = Math.PI * 2 - Math.abs(radLon2);// west
+        double x1 = EARTH_RADIUS * Math.cos(radLon1) * Math.sin(radLat1);
+        double y1 = EARTH_RADIUS * Math.sin(radLon1) * Math.sin(radLat1);
+        double z1 = EARTH_RADIUS * Math.cos(radLat1);
+
+        double x2 = EARTH_RADIUS * Math.cos(radLon2) * Math.sin(radLat2);
+        double y2 = EARTH_RADIUS * Math.sin(radLon2) * Math.sin(radLat2);
+        double z2 = EARTH_RADIUS * Math.cos(radLat2);
+
+        double d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)+ (z1 - z2) * (z1 - z2));
+        //余弦定理求夹角
+        double theta = Math.acos((EARTH_RADIUS * EARTH_RADIUS + EARTH_RADIUS * EARTH_RADIUS - d * d) / (2 * EARTH_RADIUS * EARTH_RADIUS));
+        double dist = theta * EARTH_RADIUS;
+        return dist;
+    }
+
+    private double rad(double d){
+        return d*Math.PI/180.0;
     }
 }

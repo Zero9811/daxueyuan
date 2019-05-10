@@ -12,7 +12,7 @@ public interface OrderService {
     void save(OrderRecord orderRecord);
     List<OrderRecord> findByCreatorAccount(String creatorAccount);
     List<OrderRecord> findByReceiverAccount(String receiverAccount);
-    List<OrderRecord> findAllAccessableOrder();
+    List<OrderRecord> findAllAccessableOrder(String latS,String lngS,String distance);
     OrderRecord findById(long orderId);
     List<OrderRecord> findCreatorNowOrders(String creatorAccount);
     List<OrderRecord> findCreatorCompleteOrders(String creatorAccount);

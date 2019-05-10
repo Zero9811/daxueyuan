@@ -41,7 +41,7 @@ public class OrderTest extends DaxueyuanApplicationTests {
 
     @Test
     public void query(){
-        List list = orderService.findAllAccessableOrder();
+        List list = orderRecordRepository.findByCreatorAccountAndAndOrderStateAndIsCancelFalse("1234",1);
         System.out.println(list.size());
     }
 }

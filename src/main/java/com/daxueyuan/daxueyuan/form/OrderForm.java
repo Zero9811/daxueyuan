@@ -31,4 +31,8 @@ public class OrderForm {
     //yyyy-MM-dd HH:mm:ss
     private String receiveTime;
     private String remark;
+    @NotEmpty(message = "纬度必填")
+    private String latS;
+    @NotEmpty(message = "经度必填")
+    private String lngS;
 }
