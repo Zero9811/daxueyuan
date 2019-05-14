@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -102,6 +104,18 @@ public class OrderController {
             resultVO.setData(result);
             return resultVO;
         }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
         return successResult(result);
     }
 
@@ -151,6 +165,18 @@ public class OrderController {
             resultVO.setData(result);
             return resultVO;
         }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
         return successResult(result);
     }
 
@@ -169,6 +195,18 @@ public class OrderController {
             resultVO.setData(result);
             return resultVO;
         }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
         return successResult(result);
     }
 
@@ -191,6 +229,18 @@ public class OrderController {
             resultVO.setData(result);
             return resultVO;
         }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
         return successResult(result);
     }
 
@@ -209,6 +259,18 @@ public class OrderController {
             resultVO.setData(result);
             return resultVO;
         }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
         return successResult(result);
     }
 
@@ -227,6 +289,18 @@ public class OrderController {
             resultVO.setData(result);
             return resultVO;
         }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
         return successResult(result);
     }
 
@@ -247,6 +321,18 @@ public class OrderController {
             resultVO.setData(result);
             return resultVO;
         }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
         return successResult(result);
     }
 
@@ -264,6 +350,18 @@ public class OrderController {
         else {
             resultVO.setCode(12);
             resultVO.setMsg("成功");
+            Collections.sort(result, new Comparator<OrderRecord>() {
+                public int compare(OrderRecord arg0,OrderRecord arg1){
+                    Date data1 = arg0.getCreateTime();
+                    Date date2 = arg1.getCreateTime();
+                    if (data1.before(date2))
+                        return 1;
+                    else if (data1.after(date2))
+                        return -1;
+                    else
+                        return 0;
+                }
+            });
             resultVO.setData(result);
             return resultVO;
         }

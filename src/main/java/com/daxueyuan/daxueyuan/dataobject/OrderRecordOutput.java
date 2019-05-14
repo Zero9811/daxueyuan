@@ -1,21 +1,15 @@
-package com.daxueyuan.daxueyuan.entity;
+package com.daxueyuan.daxueyuan.dataobject;
 
 import lombok.Data;
 
-import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @Author: Sean
- * @Date: 2019/3/1 10:02
+ * @Date: 2019/5/14 13:35
  */
 @Data
-@Entity
-@Table(name = "orderRecord_table")
-public class OrderRecord{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OrderRecordOutput {
     private long orderId;
     private String creatorAccount;
     private Date createTime;

@@ -55,16 +55,19 @@ public class OrderServiceImpl implements OrderService {
         calendar.add(Calendar.DAY_OF_MONTH,-2);
         now = calendar.getTime();
         log.info("time is {}",now);
-        Iterator<OrderRecord> iterator = orderRecords.iterator();
+        Iterator<OrderRecord> it = orderRecords.iterator();
         double lat = Double.valueOf(latS);
         double lng = Double.valueOf(lngS);
         double distance = Double.valueOf(distanceS);
-        while (iterator.hasNext()){
-            OrderRecord orderRecord = iterator.next();
+        while (it.hasNext()){
+            OrderRecord orderRecord = it.next();
+            double tempDis = getDist(orderRecord.getLng(),orderRecord.getLat(),lng,lat);
             if (orderRecord.getCreateTime().before(now))
-                iterator.remove();
-            if (getDist(orderRecord.getLng(),orderRecord.getLat(),lng,lat) > distance)
-                iterator.remove();
+                it.remove();
+            else if (tempDis > distance)
+                it.remove();
+            else
+                orderRecord.setDistance(tempDis);
         }
         return orderRecords;
     }
