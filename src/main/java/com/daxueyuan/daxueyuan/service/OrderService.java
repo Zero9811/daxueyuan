@@ -22,4 +22,5 @@ public interface OrderService {
     List<OrderRecord> findReceiverStateOrders(String receiverAccount,int orderState);
     void saveAll(List<OrderRecord> orderRecordList);
     List<OrderRecord> findCreatorAndReceiverStateOrders(String account,int state);
+    List<OrderRecord> findCancelOrders(String account);
 }

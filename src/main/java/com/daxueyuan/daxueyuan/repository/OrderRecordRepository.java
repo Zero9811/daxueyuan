@@ -13,6 +13,7 @@ import java.util.List;
 public interface OrderRecordRepository extends JpaRepository<OrderRecord,Long> {
     List<OrderRecord> findByCreatorAccount(String creatorAccount);
     List<OrderRecord> findByReceiverAccount(String receiverAccount);
+    List<OrderRecord> findByCreatorAccountAndOrderState(String account,int orderState);
     @Query(value = "from OrderRecord o where o.receiverAccount = null and o.isCancel = false")
     List<OrderRecord> findAccessableOrder();
     //查询所有未完成的订单

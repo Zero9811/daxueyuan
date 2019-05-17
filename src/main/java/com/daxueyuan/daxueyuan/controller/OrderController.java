@@ -150,6 +150,31 @@ public class OrderController {
         return successResult("已退单");
     }
 
+    @GetMapping("/creatorCancelled")
+    public ResultVO showCancelOrders(String account) {
+        List<OrderRecord> result = orderService.findCancelOrders(account);
+        if (result == null || result.size()<1){
+            ResultVO resultVO = new ResultVO();
+            resultVO.setCode(13);
+            resultVO.setMsg("数据为空");
+            resultVO.setData(result);
+            return resultVO;
+        }
+        Collections.sort(result, new Comparator<OrderRecord>() {
+            public int compare(OrderRecord arg0,OrderRecord arg1){
+                Date data1 = arg0.getCreateTime();
+                Date date2 = arg1.getCreateTime();
+                if (data1.before(date2))
+                    return 1;
+                else if (data1.after(date2))
+                    return -1;
+                else
+                    return 0;
+            }
+        });
+        return successResult(result);
+    }
+
     /**
      * 用户查看自己所有未完成的订单
      * @param creatorAccount

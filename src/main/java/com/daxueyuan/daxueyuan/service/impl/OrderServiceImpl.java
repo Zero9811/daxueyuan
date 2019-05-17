@@ -123,6 +123,11 @@ public class OrderServiceImpl implements OrderService {
         return result1;
     }
 
+    @Override
+    public List<OrderRecord> findCancelOrders(String account) {
+        return orderRecordRepository.findByCreatorAccountAndOrderState(account, OrderStateEnum.CANCEL.getCode());
+    }
+
     private final double EARTH_RADIUS = 6378137;
 
     private double getDist(double lng1,double lat1,double lng2,double lat2){
