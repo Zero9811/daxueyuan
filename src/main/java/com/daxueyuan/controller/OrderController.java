@@ -8,6 +8,7 @@ import com.daxueyuan.form.OrderForm;
 import com.daxueyuan.nums.OrderStateEnum;
 import com.daxueyuan.service.OrderService;
 import com.daxueyuan.util.PushUtil;
+import com.daxueyuan.util.ResultVOUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +65,7 @@ public class OrderController {
         orderRecord.setOrderState(OrderStateEnum.FREE.getCode());
         orderRecord.setIsCancel(false);
         orderService.save(orderRecord);
-        ResultVO resultVO = successResult(null);
-        return resultVO;
+        return ResultVOUtil.returnResult(12,"操作成功", null);
     }
 
     /**
@@ -85,9 +85,8 @@ public class OrderController {
         orderRecord.setReceiverAccount(receiverAccount);
         orderRecord.setOrderState(OrderStateEnum.BOOK.getCode());
         orderService.save(orderRecord);
-        ResultVO resultVO = successResult(orderRecord.getOrderId());
         PushUtil.sendPush();
-        return resultVO;
+        return ResultVOUtil.returnResult(12,"操作成功", orderRecord);
     }
 
     /**
@@ -99,11 +98,7 @@ public class OrderController {
         List result = orderService.findAllAccessableOrder(latS,lngS,distance);
 
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -117,7 +112,7 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     /**
@@ -134,7 +129,7 @@ public class OrderController {
         orderRecord.setOrderState(OrderStateEnum.CANCEL.getCode());
         orderRecord.setCancelReason(cancelReason);
         orderService.save(orderRecord);
-        return successResult("订单已取消");
+        return ResultVOUtil.returnResult(12,"操作成功", "订单已经取消");
     }
 
     /**
@@ -148,18 +143,14 @@ public class OrderController {
         OrderRecord orderRecord = orderService.findById(orderId);
         orderRecord.setReceiverAccount(null);
         orderService.save(orderRecord);
-        return successResult("已退单");
+        return ResultVOUtil.returnResult(12,"操作成功", "已退单");
     }
 
     @GetMapping("/cancelled")
     public ResultVO showCancelOrders(String account) {
         List<OrderRecord> result = orderService.findCancelOrders(account);
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -173,7 +164,7 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     /**
@@ -185,11 +176,7 @@ public class OrderController {
     public ResultVO creatorNowOrders(String creatorAccount){
         List result = orderService.findCreatorNowOrders(creatorAccount);
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -203,7 +190,7 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     /**
@@ -215,11 +202,7 @@ public class OrderController {
     public ResultVO creatorCompleteOrders(String creatorAccount){
         List result = orderService.findCreatorCompleteOrders(creatorAccount);
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -233,7 +216,7 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     /**
@@ -249,11 +232,7 @@ public class OrderController {
         System.out.println("状态: "+orderState);
         List result = orderService.findCreatorStateOrders(creatorAccount,orderState);
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -267,7 +246,7 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     /**
@@ -279,11 +258,7 @@ public class OrderController {
     public ResultVO receiverNowOrders(String creatorAccount){
         List result = orderService.findReceiverNowOrders(creatorAccount);
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -297,7 +272,7 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     /**
@@ -309,11 +284,7 @@ public class OrderController {
     public ResultVO receiverCompleteOrders(String creatorAccount){
         List result = orderService.findReceiverCompleteOrders(creatorAccount);
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -327,7 +298,7 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     /**
@@ -341,11 +312,7 @@ public class OrderController {
         int orderState = Integer.valueOf(orderStateS);
         List result = orderService.findReceiverStateOrders(receiverAccount,orderState);
         if (result == null || result.size()<1){
-            ResultVO resultVO = new ResultVO();
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         Collections.sort(result, new Comparator<OrderRecord>() {
             public int compare(OrderRecord arg0,OrderRecord arg1){
@@ -359,23 +326,18 @@ public class OrderController {
                     return 0;
             }
         });
-        return successResult(result);
+        return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
     @GetMapping("/creatorAndReceiverStateOrders")
     public ResultVO creatorAndReceiverStateOrders(String account,String orderStateS){
         int orderState = Integer.valueOf(orderStateS);
         List<OrderRecord> result = orderService.findCreatorAndReceiverStateOrders(account,orderState);
-        ResultVO resultVO = new ResultVO();
+
         if (result.size()==0){
-            resultVO.setCode(13);
-            resultVO.setMsg("数据为空");
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         else {
-            resultVO.setCode(12);
-            resultVO.setMsg("成功");
             Collections.sort(result, new Comparator<OrderRecord>() {
                 public int compare(OrderRecord arg0,OrderRecord arg1){
                     Date data1 = arg0.getCreateTime();
@@ -388,8 +350,7 @@ public class OrderController {
                         return 0;
                 }
             });
-            resultVO.setData(result);
-            return resultVO;
+            return ResultVOUtil.returnResult(12,"操作成功", result);
         }
     }
 
@@ -409,11 +370,7 @@ public class OrderController {
         orderRecord.setOrderState(state);
         orderService.save(orderRecord);
         log.info("订单id: "+orderRecord.getOrderId());
-        ResultVO resultVO = new ResultVO();
-        resultVO.setCode(12);
-        resultVO.setMsg("操作成功");
-        resultVO.setData(orderRecord.getOrderId());
-        return resultVO;
+        return ResultVOUtil.returnResult(12,"操作成功", orderRecord);
     }
 
     /**
@@ -437,14 +394,6 @@ public class OrderController {
         BeanUtils.copyProperties(orderForm,orderRecord);
         log.info("订单Id为 + "+orderRecord.getOrderId());
         orderService.save(orderRecord);
-        return successResult(orderRecord.getOrderId());
-    }
-
-    private ResultVO successResult(Object o){
-        ResultVO resultVO = new ResultVO();
-        resultVO.setCode(12);
-        resultVO.setMsg("操作成功");
-        resultVO.setData(o);
-        return resultVO;
+        return ResultVOUtil.returnResult(12,"操作成功", orderRecord);
     }
 }

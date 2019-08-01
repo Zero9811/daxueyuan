@@ -18,12 +18,8 @@ public class ResultVOUtil {
     }
 
     public static ResultVO returnResult(int code, String msg, Object data) {
-        if (resultVOUtil == null) {
-            resultVOUtil = new ResultVOUtil();
-        }
-        if (resultVO == null) {
-            resultVO = new ResultVO();
-        }
+        resultVOUtil = new ResultVOUtil();
+        resultVO = new ResultVO();
         resultVO.setCode(code);
         resultVO.setMsg(msg);
         resultVO.setData(data);
