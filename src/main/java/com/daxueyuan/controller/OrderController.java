@@ -7,6 +7,7 @@ import com.daxueyuan.exception.OrderException;
 import com.daxueyuan.form.OrderForm;
 import com.daxueyuan.nums.OrderStateEnum;
 import com.daxueyuan.service.OrderService;
+import com.daxueyuan.util.CompareOrderDateUtil;
 import com.daxueyuan.util.PushUtil;
 import com.daxueyuan.util.ResultVOUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -100,20 +100,21 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
+//    new Comparator<OrderRecord>() {
+//        public int compare(OrderRecord arg0,OrderRecord arg1){
+//            Date data1 = arg0.getCreateTime();
+//            Date date2 = arg1.getCreateTime();
+//            if (data1.before(date2))
+//                return 1;
+//            else if (data1.after(date2))
+//                return -1;
+//            else
+//                return 0;
+//        }
+//    }
 
     /**
      * 用户自己取消订单
@@ -152,18 +153,7 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
@@ -178,18 +168,7 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
@@ -204,18 +183,7 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
@@ -234,18 +202,7 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
@@ -260,18 +217,7 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
@@ -286,18 +232,7 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
@@ -314,18 +249,7 @@ public class OrderController {
         if (result == null || result.size()<1){
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
-        Collections.sort(result, new Comparator<OrderRecord>() {
-            public int compare(OrderRecord arg0,OrderRecord arg1){
-                Date data1 = arg0.getCreateTime();
-                Date date2 = arg1.getCreateTime();
-                if (data1.before(date2))
-                    return 1;
-                else if (data1.after(date2))
-                    return -1;
-                else
-                    return 0;
-            }
-        });
+        Collections.sort(result, new CompareOrderDateUtil());
         return ResultVOUtil.returnResult(12,"操作成功", result);
     }
 
@@ -338,18 +262,7 @@ public class OrderController {
             return ResultVOUtil.returnResult(13,"数据为空", result);
         }
         else {
-            Collections.sort(result, new Comparator<OrderRecord>() {
-                public int compare(OrderRecord arg0,OrderRecord arg1){
-                    Date data1 = arg0.getCreateTime();
-                    Date date2 = arg1.getCreateTime();
-                    if (data1.before(date2))
-                        return 1;
-                    else if (data1.after(date2))
-                        return -1;
-                    else
-                        return 0;
-                }
-            });
+            Collections.sort(result, new CompareOrderDateUtil());
             return ResultVOUtil.returnResult(12,"操作成功", result);
         }
     }
