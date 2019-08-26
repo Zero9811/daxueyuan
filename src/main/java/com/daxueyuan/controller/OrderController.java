@@ -13,10 +13,12 @@ import com.daxueyuan.util.ResultVOUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Security;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
@@ -85,7 +87,10 @@ public class OrderController {
         orderRecord.setReceiverAccount(receiverAccount);
         orderRecord.setOrderState(OrderStateEnum.BOOK.getCode());
         orderService.save(orderRecord);
-        PushUtil.sendPush();
+
+        String alias = orderRecord.getCreatorAccount();
+        alias = DigestUtils.md5DigestAsHex(alias.getBytes());
+        PushUtil.sendPush(alias, "订单已被接收");
         return ResultVOUtil.returnResult(12,"操作成功", orderRecord);
     }
 

@@ -5,7 +5,10 @@ import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
+import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
+import cn.jpush.api.push.model.audience.Audience;
+import cn.jpush.api.push.model.notification.Notification;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -19,10 +22,10 @@ public class PushUtil {
     private static final String MASTER_SECRET = "921eaa9c31f842556927d993";
     private static final String MESSAGE = "您的订单已被处理，请及时确认";
 
-    public static void sendPush() {
+    public static void sendPush(String alias, String message) {
         ClientConfig clientConfig = ClientConfig.getInstance();
         JPushClient jPushClient = new JPushClient(MASTER_SECRET, APP_KEY, null, clientConfig);
-        PushPayload payload = PushPayload.alertAll(MESSAGE);
+        PushPayload payload = buildPushObject_all_alias_alert(alias, message);
 
         try {
             PushResult result = jPushClient.sendPush(payload);
@@ -33,5 +36,13 @@ public class PushUtil {
         } catch (APIRequestException e) {
             e.printStackTrace();
         }
+    }
+
+    private static PushPayload buildPushObject_all_alias_alert(String alias, String message) {
+        return PushPayload.newBuilder()
+                .setPlatform(Platform.all())
+                .setAudience(Audience.alias(alias))
+                .setNotification(Notification.alert(message))
+                .build();
     }
 }
